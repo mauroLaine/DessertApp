@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             Dessert(R.drawable.oreo, 6000, 20000)
     )
     private var currentDessert = allDesserts[0]
+    lateinit var dessertTimer: DessertTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +83,8 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+
+        dessertTimer = DessertTimer()
     }
 
     /**
@@ -153,6 +156,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     override fun onStart() {
         super.onStart()
+        dessertTimer.startTimer()
         Timber.i("onStart")
     }
 
@@ -164,19 +168,17 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     override fun onPause() {
         super.onPause()
         Timber.i("onPause")
-
     }
 
     override fun onStop() {
         super.onStop()
+        dessertTimer.stopTimer()
         Timber.i("onStop")
-
     }
 
     override fun onRestart() {
         super.onRestart()
         Timber.i("onRestart")
-
     }
 
     override fun onDestroy() {
