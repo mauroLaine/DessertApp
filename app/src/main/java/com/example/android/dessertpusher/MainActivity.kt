@@ -18,7 +18,6 @@ package com.example.android.dessertpusher
 
 import android.content.ActivityNotFoundException
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -77,14 +76,20 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             onDessertClicked()
         }
 
+        dessertTimer = DessertTimer(this.lifecycle)
+
+        if (savedInstanceState != null) {
+            revenue = savedInstanceState.getInt(KEY_REVENUE, 0)
+            dessertsSold = savedInstanceState.getInt(KEY_DESSERT_SOLD, 0)
+            dessertTimer.secondsCount = savedInstanceState.getInt(KEY_DESSERT_TIMER, 0)
+        }
+
         // Set the TextViews to the right values
         binding.revenue = revenue
         binding.amountSold = dessertsSold
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
-
-        dessertTimer = DessertTimer(this.lifecycle)
     }
 
     /**
@@ -154,6 +159,19 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Timber.i("onRestoreInstanceState")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_REVENUE, revenue)
+        outState.putInt(KEY_DESSERT_SOLD, dessertsSold)
+        outState.putInt(KEY_DESSERT_TIMER, dessertTimer.secondsCount)
+        Timber.i("onSaveInstanceState")
+    }
+
     override fun onStart() {
         super.onStart()
         Timber.i("onStart")
@@ -182,5 +200,11 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("onDestroy")
+    }
+
+    companion object {
+        private val KEY_REVENUE = "key_revenue"
+        private val KEY_DESSERT_SOLD = "key_dessert_sold"
+        private val KEY_DESSERT_TIMER = "key_dessert_timer"
     }
 }
